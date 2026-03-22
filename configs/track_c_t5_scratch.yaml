@@ -1,0 +1,52 @@
+# Track C: T5-50M From-Scratch Training
+# Full parameter training — no pretraining, no quantization
+
+model:
+  architecture: "t5"
+  from_scratch: true
+  config:
+    vocab_size: 32128
+    d_model: 512
+    d_ff: 2048
+    d_kv: 64
+    num_heads: 8
+    num_layers: 6
+    num_decoder_layers: 6
+    # Total: ~60M params. Set num_layers=4 for ~48M.
+
+training:
+  output_dir: "./checkpoints/track_c_t5_scratch"
+  
+  # Phase 1: WikiSQL pre-warm
+  prewarm:
+    dataset: "wikisql"
+    num_samples: 10000
+    num_epochs: 5
+    learning_rate: 1.0e-3
+    per_device_train_batch_size: 16
+    gradient_accumulation_steps: 2  # effective batch = 32
+  
+  # Phase 2: Spider fine-tune
+  finetune:
+    dataset: "spider"
+    num_epochs: 10
+    learning_rate: 5.0e-4
+    per_device_train_batch_size: 16
+    gradient_accumulation_steps: 2  # effective batch = 32
+
+  # Shared
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  max_source_length: 512
+  max_target_length: 256
+  fp16: true
+  logging_steps: 100
+  save_steps: 1000
+  save_total_limit: 3
+  seed: 42
+  optim: "adamw_torch"
+
+data:
+  prompt_style: "seq2seq"  # "translate to SQL: {schema} | {question}"

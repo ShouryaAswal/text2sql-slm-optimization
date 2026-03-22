@@ -1,0 +1,76 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+*.whl
+
+# ===== Virtual Environments =====
+venv/
+.venv/
+env/
+.env
+ENV/
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# ===== Jupyter Notebooks =====
+.ipynb_checkpoints/
+*.ipynb_metadata/
+
+# ===== Model Training Artifacts =====
+checkpoints/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.gguf
+wandb/
+runs/
+logs/
+*.log
+lightning_logs/
+
+# ===== Model Weights & Cache =====
+models/cache/
+models/weights/
+*.onnx
+hub/
+
+# ===== Data (large files) =====
+data/raw/
+data/spider/
+data/wikisql/
+data/databases/
+*.sqlite
+*.db
+
+# ===== Results (regenerable) =====
+results/*.json
+results/*.csv
+results/*.png
+results/*.pdf
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Misc =====
+*.bak
+*.tmp
+*.temp
+.cache/
+tmp/
