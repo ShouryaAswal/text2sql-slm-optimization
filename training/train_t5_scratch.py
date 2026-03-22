@@ -6,6 +6,8 @@ Features: checkpointing, memory tracking, error recovery, metric persistence.
 Usage: python training/train_t5_scratch.py --config configs/track_c_t5_scratch.yaml
 """
 
+from __future__ import annotations
+
 import argparse
 import gc
 import json

@@ -3,6 +3,8 @@ Model loading utilities for QLoRA (Tracks A/B) and T5 from scratch (Track C).
 Handles quantization, LoRA injection, and memory reporting.
 """
 
+from __future__ import annotations
+
 import gc
 import json
 import time
@@ -12,7 +14,6 @@ from typing import Optional
 import torch
 from transformers import (
     AutoModelForCausalLM,
-    AutoModelForSeq2SeqLM,
     AutoTokenizer,
     BitsAndBytesConfig,
     T5Config,

@@ -5,6 +5,8 @@ Runs inference with all prompt strategies across all tracks and computes metrics
 Usage: python evaluation/evaluate.py --results-dir ./results --data-dir ./data
 """
 
+from __future__ import annotations
+
 import argparse
 import gc
 import json

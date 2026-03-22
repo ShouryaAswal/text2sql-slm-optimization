@@ -1,0 +1,31 @@
+# Local testing requirements (CPU-only, no bitsandbytes)
+# Use requirements.txt for full Kaggle GPU install
+
+# ===== Core ML =====
+torch
+transformers
+tokenizers
+
+# ===== Training =====
+trl
+datasets
+accelerate
+
+# ===== Tokenizer deps =====
+sentencepiece
+protobuf
+
+# ===== SQL Processing =====
+sqlparse
+
+# ===== Data & Visualization =====
+pandas
+numpy
+matplotlib
+seaborn
+
+# ===== Utilities =====
+python-dotenv
+tqdm
+pyyaml
+requests

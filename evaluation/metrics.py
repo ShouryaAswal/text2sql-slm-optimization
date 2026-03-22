@@ -3,12 +3,19 @@ Evaluation metrics computation for Text-to-SQL.
 Computes EX (execution accuracy), EM (exact match), and stratified results.
 """
 
+from __future__ import annotations
+
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Optional
 
-from evaluation.sql_executor import evaluate_single, find_database_path
+# Support both package import and direct execution
+try:
+    from evaluation.sql_executor import evaluate_single, find_database_path
+except ImportError:
+    from sql_executor import evaluate_single, find_database_path
 
 
 def compute_metrics(

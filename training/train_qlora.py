@@ -7,6 +7,8 @@ Features: checkpointing, memory tracking, error recovery, metric persistence.
 Usage: python training/train_qlora.py --config configs/track_a_qlora.yaml
 """
 
+from __future__ import annotations
+
 import argparse
 import gc
 import json
@@ -19,10 +21,6 @@ from pathlib import Path
 import torch
 import yaml
 from datasets import Dataset
-from transformers import (
-    TrainingArguments,
-    DataCollatorForLanguageModeling,
-)
 from trl import SFTTrainer, SFTConfig
 
 # Add project root to path
@@ -47,7 +45,7 @@ def prepare_dataset(
     split: str = "train",
 ) -> Dataset:
     """
-    Load Spider data, apply prompt templates, and tokenize.
+    Load Spider data, apply prompt templates, and create dataset.
     For training, we use "baseline" prompts (PR/RE2 are inference-time only).
     """
     print(f"\n  Preparing {split} dataset for {track}...")
@@ -63,7 +61,7 @@ def prepare_dataset(
             track=track,
             strategy=prompt_strategy,
         )
-        # Format as instruction → completion
+        # Format as instruction -> completion
         text = f"{prompt}\n{sample['query']}"
         formatted.append({"text": text})
 
@@ -72,34 +70,12 @@ def prepare_dataset(
     return ds
 
 
-class CheckpointCallback:
-    """Custom callback-like logic for checkpoint tracking."""
-
-    def __init__(self, tracker: MetricsTracker):
-        self.tracker = tracker
-        self.step_count = 0
-
-    def on_step(self, step: int, logs: dict):
-        """Called periodically during training."""
-        self.step_count = step
-        if logs:
-            self.tracker.log_step(step, {
-                k: round(v, 6) if isinstance(v, float) else v
-                for k, v in logs.items()
-            })
-
-    def on_save(self, path: str, step: int, metrics: dict = None):
-        """Called when a checkpoint is saved."""
-        self.tracker.log_checkpoint(path, step, metrics)
-
-
-def train_qlora(config: dict, data_dir: Path, results_dir: Path):
+def train_qlora(config: dict, data_dir: Path, results_dir: Path) -> dict:
     """Main QLoRA training function with full error handling."""
     model_config = config["model"]
     quant_config = config["quantization"]
     lora_config = config["lora"]
     train_config = config["training"]
-    data_config = config["data"]
 
     track = "track_a" if not model_config.get("thinking_mode", False) else "track_b"
     experiment_name = f"{track}_qwen3"
@@ -175,7 +151,8 @@ def train_qlora(config: dict, data_dir: Path, results_dir: Path):
             resume_from = str(output_dir)
 
         # ---- Step 5: Train ----
-        print(f"\n  Starting training ({'resuming' if resume_from else 'from scratch'})...")
+        resuming = "resuming" if resume_from else "from scratch"
+        print(f"\n  Starting training ({resuming})...")
         tracker.start_training()
 
         mem_before_train = get_gpu_memory_stats()
@@ -227,7 +204,8 @@ def train_qlora(config: dict, data_dir: Path, results_dir: Path):
 
         print(f"\n  [SUCCESS] Training complete!")
         print(f"  Final train loss: {train_result.training_loss:.4f}")
-        print(f"  Final eval loss:  {eval_results.get('eval_loss', 'N/A')}")
+        eval_loss = eval_results.get('eval_loss', 'N/A')
+        print(f"  Final eval loss:  {eval_loss}")
         print(f"  Model saved to:   {final_path}")
         print(f"  Metrics saved to: {tracker.metrics_file}")
 

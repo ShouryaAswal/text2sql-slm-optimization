@@ -3,6 +3,8 @@ SQL execution engine for evaluation.
 Executes generated SQL against Spider's SQLite databases and compares results.
 """
 
+from __future__ import annotations
+
 import re
 import sqlite3
 import time
